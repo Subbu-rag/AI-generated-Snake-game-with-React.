@@ -9,7 +9,7 @@
 
 @layer base {
   body {
-    @apply bg-black text-cyan-400 antialiased overflow-hidden;
+    @apply bg-black text-cyan-400 antialiased;
     background-image: radial-gradient(circle, #111 1px, transparent 1px);
     background-size: 20px 20px;
   }

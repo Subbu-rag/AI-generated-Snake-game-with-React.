@@ -68,12 +68,14 @@ export const SnakeGame: React.FC = () => {
         newHead.y >= GRID_SIZE
       ) {
         setIsGameOver(true);
+        if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
         return prevSnake;
       }
 
       // Self collision
       if (prevSnake.some((segment) => segment.x === newHead.x && segment.y === newHead.y)) {
         setIsGameOver(true);
+        if ('vibrate' in navigator) navigator.vibrate([100, 50, 100]);
         return prevSnake;
       }
 
@@ -83,6 +85,7 @@ export const SnakeGame: React.FC = () => {
       if (newHead.x === food.x && newHead.y === food.y) {
         setScore((s) => s + 10);
         setFood(generateFood(newSnake));
+        if ('vibrate' in navigator) navigator.vibrate(50);
       } else {
         newSnake.pop();
       }
@@ -91,13 +94,23 @@ export const SnakeGame: React.FC = () => {
     });
   }, [direction, food, isGameOver, isPaused, generateFood]);
 
+  const handleDirectionChange = (newDir: Direction) => {
+    setDirection((prev) => {
+      if (newDir === 'UP' && prev !== 'DOWN') return 'UP';
+      if (newDir === 'DOWN' && prev !== 'UP') return 'DOWN';
+      if (newDir === 'LEFT' && prev !== 'RIGHT') return 'LEFT';
+      if (newDir === 'RIGHT' && prev !== 'LEFT') return 'RIGHT';
+      return prev;
+    });
+  };
+
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       switch (e.key) {
-        case 'ArrowUp': if (direction !== 'DOWN') setDirection('UP'); break;
-        case 'ArrowDown': if (direction !== 'UP') setDirection('DOWN'); break;
-        case 'ArrowLeft': if (direction !== 'RIGHT') setDirection('LEFT'); break;
-        case 'ArrowRight': if (direction !== 'LEFT') setDirection('RIGHT'); break;
+        case 'ArrowUp': handleDirectionChange('UP'); break;
+        case 'ArrowDown': handleDirectionChange('DOWN'); break;
+        case 'ArrowLeft': handleDirectionChange('LEFT'); break;
+        case 'ArrowRight': handleDirectionChange('RIGHT'); break;
         case ' ': setIsPaused((p) => !p); break;
       }
     };
@@ -122,21 +135,21 @@ export const SnakeGame: React.FC = () => {
   }, [score, highScore]);
 
   return (
-    <div className="flex flex-col items-center gap-8 p-8 bg-black glitch-border">
-      <div className="flex justify-between w-full px-4">
+    <div className="flex flex-col items-center gap-4 md:gap-8 p-4 md:p-8 bg-black glitch-border w-full max-w-[min(90vw,500px)]">
+      <div className="flex justify-between w-full px-2 md:px-4">
         <div className="flex flex-col">
-          <span className="text-[8px] uppercase tracking-[0.2em] text-cyan-700 font-pixel">DATA_SCORE</span>
+          <span className="text-[6px] md:text-[8px] uppercase tracking-[0.2em] text-cyan-700 font-pixel">DATA_SCORE</span>
           <span 
-            className="text-4xl font-pixel text-magenta glitch"
+            className="text-2xl md:text-4xl font-pixel text-magenta glitch"
             data-text={score.toString().padStart(4, '0')}
           >
             {score.toString().padStart(4, '0')}
           </span>
         </div>
         <div className="flex flex-col items-end">
-          <span className="text-[8px] uppercase tracking-[0.2em] text-cyan-700 font-pixel">PEAK_VALUE</span>
+          <span className="text-[6px] md:text-[8px] uppercase tracking-[0.2em] text-cyan-700 font-pixel">PEAK_VALUE</span>
           <span 
-            className="text-4xl font-pixel text-cyan-400 glitch"
+            className="text-2xl md:text-4xl font-pixel text-cyan-400 glitch"
             data-text={highScore.toString().padStart(4, '0')}
           >
             {highScore.toString().padStart(4, '0')}
@@ -145,10 +158,8 @@ export const SnakeGame: React.FC = () => {
       </div>
 
       <div 
-        className="relative bg-black border-4 border-cyan-900 overflow-hidden"
+        className="relative bg-black border-2 md:border-4 border-cyan-900 overflow-hidden aspect-square w-full touch-none"
         style={{ 
-          width: GRID_SIZE * 20, 
-          height: GRID_SIZE * 20,
           display: 'grid',
           gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
           gridTemplateRows: `repeat(${GRID_SIZE}, 1fr)`,
@@ -230,8 +241,47 @@ export const SnakeGame: React.FC = () => {
         </AnimatePresence>
       </div>
 
-      <div className="flex flex-col gap-2 text-cyan-900 text-[8px] font-pixel uppercase text-center">
-        <p>[ INPUT_ARROWS ] :: [ TOGGLE_SPACE ]</p>
+      {/* Mobile Controls */}
+      <div className="grid grid-cols-3 gap-3 md:hidden mt-4">
+        <div />
+        <button 
+          className="w-16 h-16 bg-cyan-900/20 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 active:bg-magenta active:text-black active:scale-90 transition-all rounded-lg"
+          onClick={() => handleDirectionChange('UP')}
+        >
+          <span className="text-2xl">▲</span>
+        </button>
+        <div />
+        <button 
+          className="w-16 h-16 bg-cyan-900/20 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 active:bg-magenta active:text-black active:scale-90 transition-all rounded-lg"
+          onClick={() => handleDirectionChange('LEFT')}
+        >
+          <span className="text-2xl">◀</span>
+        </button>
+        <button 
+          className="w-16 h-16 bg-magenta/20 border-2 border-magenta flex items-center justify-center text-magenta active:bg-white active:text-black active:scale-90 transition-all rounded-lg"
+          onClick={() => setIsPaused(!isPaused)}
+        >
+          <span className="text-xl">{isPaused ? '▶' : '||'}</span>
+        </button>
+        <button 
+          className="w-16 h-16 bg-cyan-900/20 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 active:bg-magenta active:text-black active:scale-90 transition-all rounded-lg"
+          onClick={() => handleDirectionChange('RIGHT')}
+        >
+          <span className="text-2xl">▶</span>
+        </button>
+        <div />
+        <button 
+          className="w-16 h-16 bg-cyan-900/20 border-2 border-cyan-400 flex items-center justify-center text-cyan-400 active:bg-magenta active:text-black active:scale-90 transition-all rounded-lg"
+          onClick={() => handleDirectionChange('DOWN')}
+        >
+          <span className="text-2xl">▼</span>
+        </button>
+        <div />
+      </div>
+
+      <div className="flex flex-col gap-2 text-cyan-900 text-[6px] md:text-[8px] font-pixel uppercase text-center">
+        <p className="hidden md:block">[ INPUT_ARROWS ] :: [ TOGGLE_SPACE ]</p>
+        <p className="md:hidden">[ TOUCH_CONTROLS_ACTIVE ]</p>
         <p className="opacity-30">ENCRYPTION_LAYER_ACTIVE</p>
       </div>
     </div>

@@ -8,14 +8,14 @@ export default function App() {
     <div className="min-h-screen bg-black text-cyan-400 font-sans static-noise crt-flicker">
       <div className="scanline" />
       
-      <main className="relative z-10 container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-center gap-12">
+      <main className="relative z-10 container mx-auto px-2 md:px-4 py-4 md:py-8 min-h-screen flex flex-col items-center justify-start lg:justify-center gap-6 md:gap-12">
         <motion.header 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center space-y-4"
         >
           <h1 className="text-4xl md:text-6xl font-pixel text-magenta uppercase tear tracking-tighter">
-            SYSTEM_ERROR_0x99
+            NEON_SNAKE_v1.0
           </h1>
           <div className="flex items-center justify-center gap-4">
             <p className="text-[10px] font-mono uppercase tracking-[0.5em] text-cyan-600">
@@ -24,15 +24,15 @@ export default function App() {
           </div>
         </motion.header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 w-full max-w-7xl items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 w-full max-w-7xl items-start">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:col-span-4 flex flex-col gap-8"
+            className="lg:col-span-4 flex flex-col gap-6 md:gap-8"
           >
             <MusicPlayer />
             
-            <div className="glitch-border bg-black p-4 space-y-2">
+            <div className="hidden md:block glitch-border bg-black p-4 space-y-2">
               <h4 className="text-[8px] font-pixel text-magenta uppercase">Machine_Log</h4>
               <div className="text-[10px] font-mono text-cyan-700 space-y-1">
                 <p>&gt; INITIALIZING_CORE...</p>
@@ -46,7 +46,7 @@ export default function App() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="lg:col-span-8 flex justify-center"
+            className="lg:col-span-8 flex justify-center w-full"
           >
             <SnakeGame />
           </motion.div>
